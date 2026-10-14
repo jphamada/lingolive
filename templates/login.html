@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Iniciar Sesión • Live Event Translator</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background-color: #0b0d13;
+      padding: 1.5rem;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: #141722;
+      border: 1px solid #23293a;
+      border-radius: 18px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .login-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.75rem;
+    }
+    .login-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+    }
+    .login-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+    .login-subtitle {
+      font-size: 0.8rem;
+      color: #8b92a5;
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+    }
+    .login-error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-login {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      padding: 0.9rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 0.4rem;
+    }
+    .btn-login:hover {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      transform: translateY(-1px);
+    }
+    .login-footer {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #545c70;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+      </div>
+      <div>
+        <h1 class="login-title">Live Event Translator</h1>
+        <p class="login-subtitle">Acceso protegido a la plataforma de traducción</p>
+      </div>
+    </div>
+
+    <!-- Error message if any -->
+    <div id="errorBox" class="login-error" style="display: none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span id="errorMsg">Usuario o contraseña incorrectos.</span>
+    </div>
+
+    <form class="login-form" id="loginForm" method="POST" action="/login">
+      <input type="hidden" name="next" id="nextInput" value="/">
+
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="admin" required autofocus autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="btn-login">
+        Iniciar Sesión
+      </button>
+    </form>
+
+    <div class="login-footer">
+      LingoLive • Powered by Gemini Live API
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error")) {
+      document.getElementById("errorBox").style.display = "flex";
+    }
+    if (params.get("next")) {
+      document.getElementById("nextInput").value = params.get("next");
+    }
+  </script>
+</body>
+</html>

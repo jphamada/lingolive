@@ -1,0 +1,208 @@
+:root {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --font-size: 52px;
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --text-align: center;
+  --line-height: 1.45;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  user-select: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Header */
+.projection-header {
+  position: absolute;
+  top: 1.5rem;
+  left: 2.5rem;
+  right: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.event-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.clock-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.25rem;
+  font-weight: 600;
+  opacity: 0.5;
+}
+
+/* Canvas Area */
+.projection-canvas {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem 5rem;
+  box-sizing: border-box;
+}
+
+.text-container {
+  width: 100%;
+  max-width: 1500px;
+  font-size: var(--font-size);
+  line-height: var(--line-height);
+  text-align: var(--text-align);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  word-break: break-word;
+  transition: font-size 0.2s ease, text-align 0.2s ease;
+}
+
+/* Subtitle lines */
+.subtitle-line {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.subtitle-active {
+  font-weight: 700;
+  opacity: 1;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
+  animation: subtitleAppear 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.subtitle-dimmed {
+  font-weight: 500;
+  opacity: 0.45;
+  font-size: 0.88em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes subtitleAppear {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Placeholder */
+.empty-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0.25;
+}
+
+.pulsing-circle {
+  width: 16px;
+  height: 16px;
+  background-color: var(--text-color);
+  border-radius: 50%;
+  animation: pulse-ring 2s infinite ease-in-out;
+}
+
+.empty-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.4; }
+  50% { transform: scale(1.3); opacity: 0.8; }
+  100% { transform: scale(0.9); opacity: 0.4; }
+}
+
+/* Teleprompter Mode */
+.mode-teleprompter .projection-canvas {
+  justify-content: flex-end;
+  padding-bottom: 5rem;
+}
+
+.mode-teleprompter .text-container {
+  overflow: hidden;
+  max-height: 80vh;
+}
+
+/* Ticker Mode */
+.mode-ticker .projection-canvas {
+  justify-content: flex-end;
+  padding: 0;
+}
+
+.mode-ticker .text-container {
+  max-width: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+  padding: 1.5rem 3rem;
+}
+
+/* Alignment Classes */
+.align-center {
+  --text-align: center;
+}
+
+.align-left {
+  --text-align: left;
+}
+
+/* Minimal Screen Controls */
+.screen-controls {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+body:hover .screen-controls,
+.screen-controls:hover,
+.screen-controls.force-visible {
+  opacity: 1;
+}
+
+.control-btn {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
+}

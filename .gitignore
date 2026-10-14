@@ -1,0 +1,28 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment Variables & Secrets
+.env
+*.local
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test audio artifacts
+test*.pcm
+test*.aiff
+test*.wav

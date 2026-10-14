@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Control • Traducción Simultánea para Eventos</title>
+  <link rel="stylesheet" href="/static/css/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-title">Live Event Translator</h1>
+        <p class="brand-subtitle">Gemini Live API • Traducción Simultánea en Tiempo Real</p>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <div id="statusPill" class="status-pill status-stopped">
+        <span class="status-dot"></span>
+        <span id="statusText">DETENIDO</span>
+      </div>
+
+      <button id="openProjectionBtn" class="btn btn-outline">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        <span>Abrir Ventana de Proyección</span>
+      </button>
+
+      <a href="/logout" id="logoutBtn" class="btn btn-outline btn-logout" style="display:none;" title="Cerrar Sesión">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Salir</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- Left Column: Controls & Configuration -->
+    <div class="col-controls">
+
+      <!-- Session Control Card -->
+      <div class="card card-primary">
+        <div class="card-header">
+          <h2 class="card-title">Control de la Sesión</h2>
+          <span class="card-badge" id="sessionTimer">00:00:00</span>
+        </div>
+
+        <div class="card-body">
+          <!-- Big Start/Stop Button -->
+          <button id="toggleSessionBtn" class="btn btn-hero btn-start">
+            <svg class="icon-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <svg class="icon-stop" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+              <rect x="6" y="6" width="12" height="12"></rect>
+            </svg>
+            <span id="toggleSessionText">INICIAR TRADUCCIÓN</span>
+          </button>
+
+          <!-- Quick Clear Button -->
+          <button id="clearScreenBtn" class="btn btn-secondary btn-block">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            <span>Limpiar Pantalla del Proyector</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3-Device Stage Connections & QR Codes Card -->
+      <div class="card card-network">
+        <div class="card-header">
+          <div class="header-with-badge">
+            <h2 class="card-title">Dispositivos en Escenario (3 URLs)</h2>
+            <span class="badge-live-tag" id="networkIpBadge">RED LOCAL</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Audio Source Selector -->
+          <div class="form-group">
+            <label>Fuente de Captura de Audio</label>
+            <div class="btn-group">
+              <button type="button" class="btn btn-toggle active" id="sourceMobileBtn" data-source="mobile">
+                📱 Celular en Escenario (/mic)
+              </button>
+              <button type="button" class="btn btn-toggle" id="sourceComputerBtn" data-source="computer">
+                💻 Micrófono de Computadora
+              </button>
+            </div>
+          </div>
+
+          <!-- Device Links with QR Codes -->
+          <div class="device-link-list">
+            <!-- Mobile Device Link -->
+            <div class="device-link-item">
+              <div class="device-link-header">
+                <div class="device-link-title">
+                  <span class="device-icon">📱</span>
+                  <div>
+                    <strong>1. Celular en Escenario</strong>
+                    <span id="mobileStatusBadge" class="device-status-badge badge-offline">Desconectado</span>
+                  </div>
+                </div>
+                <div class="device-link-actions">
+                  <button class="btn btn-sm btn-ghost show-qr-btn" data-url="mobile" title="Ver Código QR">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="14" width="7" height="7"></rect>
+                      <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>QR</span>
+                  </button>
+                  <button class="btn btn-sm btn-ghost copy-url-btn" data-url="mobile" title="Copiar URL">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <input type="text" id="mobileUrlInput" class="form-control form-control-sm" readonly>
+            </div>
+
+            <!-- Projection Link -->
+            <div class="device-link-item">
+              <div class="device-link-header">
+                <div class="device-link-title">
+                  <span class="device-icon">🖥️</span>
+                  <div>
+                    <strong>2. Pantalla de Proyección</strong>
+                    <span id="projectionStatusBadge" class="device-status-badge badge-online">Lista</span>
+                  </div>
+                </div>
+                <div class="device-link-actions">
+                  <button class="btn btn-sm btn-ghost show-qr-btn" data-url="projection" title="Ver Código QR">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="3" width="7" height="7"></rect>
+                      <rect x="14" y="14" width="7" height="7"></rect>
+                      <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>QR</span>
+                  </button>
+                  <button class="btn btn-sm btn-ghost copy-url-btn" data-url="projection" title="Copiar URL">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <input type="text" id="projectionUrlInput" class="form-control form-control-sm" readonly>
+            </div>
+          </div>
+
+          <!-- Inline QR Display Box -->
+          <div id="qrBox" class="qr-preview-box" style="display:none;">
+            <div class="qr-header">
+              <span id="qrTitle">Escanear con la Cámara del Celular</span>
+              <button id="closeQrBtn" class="btn-close-qr">&times;</button>
+            </div>
+            <div class="qr-img-wrapper" id="qrImgWrapper"></div>
+            <span class="qr-subtext">Abre la cámara de tu iPhone o Android y apunta a este código.</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Languages Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Idiomas</h2>
+        </div>
+        <div class="card-body">
+          <div class="lang-row">
+            <div class="form-group flex-1">
+              <label for="inputLang">Idioma de Entrada (Voz del Orador)</label>
+              <div class="select-wrapper">
+                <select id="inputLang" class="form-control"></select>
+              </div>
+            </div>
+
+            <button id="swapLangsBtn" class="btn btn-icon" title="Intercambiar idiomas" aria-label="Intercambiar idiomas">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 5h18"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 19H3"></path>
+              </svg>
+            </button>
+
+            <div class="form-group flex-1">
+              <label for="targetLang">Idioma de Salida (Traducción)</label>
+              <div class="select-wrapper">
+                <select id="targetLang" class="form-control"></select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Microphone & Audio Card -->
+      <div class="card" id="computerAudioCard">
+        <div class="card-header">
+          <h2 class="card-title">Monitoreo de Audio</h2>
+          <span id="audioLevelPct" class="audio-badge">0%</span>
+        </div>
+        <div class="card-body">
+          <div class="form-group" id="deviceSelectGroup">
+            <label for="deviceSelect">Micrófono de la Computadora</label>
+            <div class="select-wrapper">
+              <select id="deviceSelect" class="form-control"></select>
+            </div>
+          </div>
+
+          <!-- VU Meter -->
+          <div class="vu-container">
+            <div class="vu-label">Nivel de Entrada de Voz (VU Meter):</div>
+            <div class="vu-bar-wrapper">
+              <div id="vuBar" class="vu-bar"></div>
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="playAudioToggle">
+              <span class="checkmark"></span>
+              <span class="label-text">Reproducir audio traducido por altavoces (sintetizador de voz)</span>
+            </label>
+            <span class="hint-text">Recomendado desactivado para proyecciones de eventos (evita acoples de sonido con el micrófono).</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Projection Screen Settings -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Diseño de la Pantalla de Proyección</h2>
+          <span class="hint-pill">Actualiza en vivo</span>
+        </div>
+        <div class="card-body">
+          <!-- Background Color -->
+          <div class="form-group">
+            <label>Color de Fondo (Fondo Sólido)</label>
+            <div class="color-presets">
+              <button class="color-preset active" data-color="#000000" style="background:#000000;" title="Negro Absoluto"></button>
+              <button class="color-preset" data-color="#121214" style="background:#121214;" title="Gris Grafito"></button>
+              <button class="color-preset" data-color="#0B132B" style="background:#0B132B;" title="Azul Noche"></button>
+              <button class="color-preset" data-color="#00FF00" style="background:#00FF00;" title="Verde Croma (OBS)"></button>
+              <button class="color-preset" data-color="#FFFFFF" style="background:#FFFFFF;" title="Blanco"></button>
+              <input type="color" id="bgColorPicker" value="#000000" class="color-input" title="Personalizado">
+            </div>
+          </div>
+
+          <!-- Text Color -->
+          <div class="form-group">
+            <label>Color del Texto</label>
+            <div class="color-presets">
+              <button class="text-color-preset active" data-color="#FFFFFF" style="background:#FFFFFF;" title="Blanco Nítido"></button>
+              <button class="text-color-preset" data-color="#FFE066" style="background:#FFE066;" title="Amarillo Suave"></button>
+              <button class="text-color-preset" data-color="#00E5FF" style="background:#00E5FF;" title="Cian"></button>
+              <button class="text-color-preset" data-color="#FFB703" style="background:#FFB703;" title="Ámbar"></button>
+              <button class="text-color-preset" data-color="#111111" style="background:#111111;" title="Negro"></button>
+              <input type="color" id="textColorPicker" value="#FFFFFF" class="color-input" title="Personalizado">
+            </div>
+          </div>
+
+          <!-- Font Size Slider -->
+          <div class="form-group">
+            <div class="label-with-value">
+              <label for="fontSizeRange">Tamaño del Texto en Proyector</label>
+              <span id="fontSizeVal">52px</span>
+            </div>
+            <input type="range" id="fontSizeRange" min="32" max="110" step="2" value="52" class="range-slider">
+          </div>
+
+          <!-- Display Mode -->
+          <div class="form-group">
+            <label for="displayModeSelect">Modo de Visualización</label>
+            <select id="displayModeSelect" class="form-control">
+              <option value="subtitles">Subtítulos de Escenario (1-3 frases con foco dinámico)</option>
+              <option value="teleprompter">Teleprompter Continuo (párrafos continuos con autoscroll)</option>
+              <option value="ticker">Cinta Inferior / Ticker (franja horizontal inferior)</option>
+            </select>
+          </div>
+
+          <!-- Text Alignment -->
+          <div class="form-group">
+            <label>Alineación del Texto</label>
+            <div class="btn-group">
+              <button type="button" class="btn btn-toggle active" data-align="center">Centro</button>
+              <button type="button" class="btn btn-toggle" data-align="left">Izquierda</button>
+            </div>
+          </div>
+
+          <!-- Event Title -->
+          <div class="form-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="showTitleToggle">
+              <span class="checkmark"></span>
+              <span class="label-text">Mostrar Banner/Título del Evento en Proyección</span>
+            </label>
+            <input type="text" id="eventTitleInput" class="form-control mt-sm" value="Traducción Simultánea en Vivo" placeholder="Nombre o subtítulo del evento...">
+          </div>
+
+          <!-- Show Clock -->
+          <div class="form-group checkbox-group">
+            <label class="custom-checkbox">
+              <input type="checkbox" id="showClockToggle">
+              <span class="checkmark"></span>
+              <span class="label-text">Mostrar Reloj en esquina de la pantalla</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Live Monitor & Logs -->
+    <div class="col-monitor">
+
+      <!-- Live Projection Simulator Card -->
+      <div class="card card-monitor">
+        <div class="card-header">
+          <div class="header-with-badge">
+            <h2 class="card-title">Simulador en Vivo de la Pantalla del Proyector</h2>
+            <span class="badge-live-tag">SALIDA DEL EVENTO</span>
+          </div>
+          <button id="copyTranslationBtn" class="btn btn-sm btn-ghost" title="Copiar texto actual">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copiar</span>
+          </button>
+        </div>
+
+        <div class="card-body no-padding">
+          <div id="simScreen" class="simulator-screen">
+            <div id="simTitle" class="sim-event-title" style="display:none;">Traducción Simultánea en Vivo</div>
+            <div id="simTextContainer" class="sim-text-container">
+              <p class="sim-placeholder">El texto traducido aparecerá aquí en tiempo real cuando inicies la sesión...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Original Speech Transcription Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Audio Original del Orador (Transcripción en Tiempo Real)</h2>
+          <span class="hint-pill">Solo para el operador</span>
+        </div>
+        <div class="card-body">
+          <div id="originalTranscriptBox" class="transcript-box">
+            <span class="placeholder-text">Esperando que el orador comience a hablar por el micrófono...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- History & Transcript Card -->
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Registro Completo del Evento</h2>
+          <div class="header-actions">
+            <a href="/api/export" id="exportBtn" class="btn btn-sm btn-secondary" download>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>Descargar .txt</span>
+            </a>
+          </div>
+        </div>
+        <div class="card-body no-padding">
+          <div id="historyList" class="history-list">
+            <div class="history-empty">Aún no hay segmentos registrados en este evento.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

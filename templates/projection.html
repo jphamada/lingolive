@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantalla de Proyección • Traducción en Vivo</title>
+  <link rel="stylesheet" href="/static/css/projection.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body id="projectionBody" class="projection-body mode-subtitles align-center">
+  <!-- Top Bar (Optional Title and Clock) -->
+  <header class="projection-header" id="projectionHeader">
+    <div id="eventTitle" class="event-title" style="display: none;"></div>
+    <div id="clockDisplay" class="clock-display" style="display: none;"></div>
+  </header>
+
+  <!-- Main Subtitle / Translation Canvas -->
+  <main class="projection-canvas" id="canvas">
+    <div id="textContainer" class="text-container">
+      <!-- Waiting placeholder -->
+      <div id="emptyNotice" class="empty-notice">
+        <div class="pulsing-circle"></div>
+        <div class="empty-text">Traducción Simultánea en Vivo</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Floating Minimal Controls (auto-hide on mouse idle) -->
+  <div class="screen-controls" id="floatingControls">
+    <button id="fullscreenBtn" class="control-btn" title="Pantalla Completa (Tecla F)">
+      <svg id="iconEnterFs" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+      </svg>
+      <svg id="iconExitFs" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+      </svg>
+    </button>
+  </div>
+
+  <script src="/static/js/projection.js"></script>
+</body>
+</html>

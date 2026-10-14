@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0f12">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Micrófono de Escenario • Live Event Broadcast</title>
+  <link rel="stylesheet" href="/static/css/mobile.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="mobile-body">
+  <div class="mobile-app-wrapper">
+
+    <!-- Top Navigation Bar -->
+    <header class="mobile-header">
+      <button id="exitBtn" class="header-btn" title="Volver al Panel" aria-label="Volver">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+
+      <div class="header-center">
+        <h1 class="header-title">Active Broadcast Session</h1>
+        <span class="header-subtitle">AIR-SESSION ACTIVE</span>
+      </div>
+
+      <div class="header-avatar" title="Operador">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+      </div>
+    </header>
+
+    <!-- Main Content Cards -->
+    <main class="mobile-content">
+
+      <!-- Status Card -->
+      <section class="card status-card">
+        <div class="status-left">
+          <div class="status-indicator">
+            <span class="live-dot" id="liveDot"></span>
+            <span class="live-text" id="liveStatusText">EN VIVO</span>
+          </div>
+          <span class="channel-tag" id="channelTag">TX CANAL 01</span>
+        </div>
+
+        <div class="status-right">
+          <div class="pill-badge" id="geminiBadge">
+            <svg class="bolt-icon" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <span id="geminiStatusLabel">Gemini Live Conectado</span>
+            <span class="pill-dot">•</span>
+            <span class="latency-val" id="latencyVal">18ms</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Capture Device Card -->
+      <section class="card device-card">
+        <div class="device-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        </div>
+
+        <div class="device-info">
+          <span class="card-caption">DISPOSITIVO DE CAPTURA</span>
+          <span class="device-name" id="deviceName">Micrófono del Celular</span>
+        </div>
+
+        <div class="sample-rate-badge" id="sampleRateBadge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          <span>16 kHz</span>
+        </div>
+      </section>
+
+      <!-- Input Level & Visualizer Card -->
+      <section class="card level-card">
+        <div class="level-header">
+          <span class="card-caption">NIVEL DE ENTRADA</span>
+          <span class="dbfs-value" id="dbfsVal">-17.0 dBFS</span>
+        </div>
+
+        <!-- Meter Bar -->
+        <div class="meter-bar-track">
+          <div class="meter-bar-fill" id="meterBarFill"></div>
+        </div>
+
+        <!-- Scale Ticks -->
+        <div class="meter-scale">
+          <span>-∞</span>
+          <span>-24</span>
+          <span>-12</span>
+          <span>-6</span>
+          <span>0 dB</span>
+        </div>
+
+        <!-- Central Voice Visualizer Box -->
+        <div class="visualizer-box">
+          <div class="eq-bars">
+            <span class="bar bar-1"></span>
+            <span class="bar bar-2"></span>
+            <span class="bar bar-3"></span>
+            <span class="bar bar-4"></span>
+            <span class="bar bar-5"></span>
+          </div>
+          <span class="voice-status-text" id="voiceStatusText">VOZ ACTIVA</span>
+        </div>
+
+        <!-- Sub-status Footer -->
+        <div class="level-footer">
+          <div class="feature-status">
+            <span class="feature-dot"></span>
+            <span>Cancelación de Eco ON</span>
+          </div>
+          <span class="buffer-status" id="bufferStatus">Buffers: 0 drops</span>
+        </div>
+      </section>
+
+      <!-- Big Hero Action Button (Mute/Unmute) -->
+      <section class="action-section">
+        <button id="muteToggleBtn" class="hero-mic-btn btn-active" aria-label="Silenciar o reactivar micrófono">
+          <div class="btn-content">
+            <div class="btn-icon-wrapper" id="btnIconWrapper">
+              <svg id="micIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+              </svg>
+              <svg id="micOffIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+                <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+                <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"></path>
+                <line x1="12" y1="19" x2="12" y2="23"></line>
+                <line x1="8" y1="23" x2="16" y2="23"></line>
+              </svg>
+            </div>
+            <span class="btn-main-label" id="btnMainLabel">Micrófono Activo • Silenciar</span>
+          </div>
+        </button>
+        <p class="btn-instruction" id="btnInstruction">Presiona para mutear el canal instantáneamente</p>
+      </section>
+
+      <!-- Linked Session Card -->
+      <section class="card session-card">
+        <div class="session-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+        </div>
+
+        <div class="session-info">
+          <span class="card-caption">SESIÓN VINCULADA</span>
+          <span class="session-name" id="sessionTitle">Keynote en Vivo</span>
+        </div>
+
+        <div class="lang-route-badge" id="langRouteBadge">
+          <span class="lang-icon">文A</span>
+          <span id="langRouteText">AUTO → ES</span>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Initial Tap to Start Overlay (required by mobile browsers to unlock AudioContext) -->
+    <div id="startOverlay" class="start-overlay">
+      <div class="start-card">
+        <div class="start-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        </div>
+        <h2>Micrófono de Escenario</h2>
+        <p>Toca el botón para activar la captura de voz de este dispositivo y transmitirla al proyector.</p>
+        <button id="activateAudioBtn" class="btn-activate">
+          ACTIVAR MICRÓFONO
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/js/mobile.js"></script>
+</body>
+</html>
